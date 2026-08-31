@@ -2,7 +2,7 @@
 
 ## 1. Project Overview
 
-**Gratitude Journal** is a subscription-based gratitude micro-blogging platform where users create an account and write **up to 3 gratitude entries every day**.
+**Thankly** is a subscription-based gratitude micro-blogging platform where users create an account and write **up to 3 gratitude entries every day**.
 
 The product is designed like a simple personal blog rather than a traditional complex SaaS dashboard. Each day's gratitude entries appear as a small daily journal/post, and users can access their complete journal history from the day they joined.
 
