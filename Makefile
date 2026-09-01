@@ -1,56 +1,56 @@
-.PHONY: dev dev-backend dev-frontend docker-up docker-down migrate test setup
+.PHONY: dev infra api web setup clean migrate
 
-# Monorepo
-dev: docker-up
-	@echo "Services starting..."
-	@echo "Frontend: http://localhost:4321"
-	@echo "API:      http://localhost:8080"
-	@echo "Postgres: localhost:5432"
-	@echo "Redis:    localhost:6379"
-	@cd frontend && bun run dev
+# All services (infra + api + web)
+dev: infra
+	@echo ""
+	@echo "  Thankly Dev Environment"
+	@echo "  ─────────────────────────"
+	@echo "  Frontend:  http://localhost:4321"
+	@echo "  API:       http://localhost:8080"
+	@echo "  Postgres:  localhost:5432"
+	@echo "  Redis:     localhost:6379"
+	@echo ""
+	@make -j2 api web
 
-docker-up:
+# Infrastructure only (Docker)
+infra:
 	docker compose up -d
+	@echo "Waiting for services..."
+	@sleep 2
+	@docker compose ps
 
-docker-down:
-	docker compose down
-
-docker-logs:
-	docker compose logs -f
-
-# Backend
-dev-backend:
+# Go backend (native)
+api:
 	cd backend && go run ./cmd/server
 
-build-backend:
-	cd backend && go build -o bin/thankly-api ./cmd/server
-
-test-backend:
-	cd backend && go test ./...
-
-test-backend-verbose:
-	cd backend && go test -v ./...
-
-# Frontend
-dev-frontend:
+# Astro frontend (native)
+web:
 	cd frontend && bun run dev
 
-build-frontend:
-	cd frontend && bun run build
-
-# Database
-migrate:
-	psql $(DATABASE_URL) -f backend/migrations/001_initial_schema.sql
-
-migrate-docker:
-	docker compose exec postgres psql -U thankly -d thankly -f /docker-entrypoint-initdb.d/001_initial_schema.sql
-
-# Setup
+# Setup project for first time
 setup:
 	cp -n .env.example .env 2>/dev/null || true
-	docker compose up -d postgres redis
-	@echo "Waiting for services..."
+	make infra
 	@sleep 3
-	docker compose exec postgres psql -U thankly -d thankly -f /docker-entrypoint-initdb.d/001_initial_schema.sql
+	@echo "Running migrations..."
+	@docker compose exec -T postgres psql -U thankly -d thankly -f /docker-entrypoint-initdb.d/001_initial_schema.sql
 	cd frontend && bun install
-	@echo "Setup complete! Run 'make dev' to start."
+	@echo ""
+	@echo "Setup complete!"
+	@echo "Run 'make dev' to start all services."
+
+# Stop everything
+clean:
+	docker compose down
+
+# Run migrations
+migrate:
+	docker compose exec -T postgres psql -U thankly -d thankly -f /docker-entrypoint-initdb.d/001_initial_schema.sql
+
+# Backend tests
+test:
+	cd backend && go test ./...
+
+# Backend build
+build:
+	cd backend && go build -o bin/thankly-api ./cmd/server
