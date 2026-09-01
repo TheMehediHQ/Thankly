@@ -9,6 +9,7 @@ import Layout from '../../layouts/Layout.astro';
       <div class="dash-nav-links">
         <a href="/dashboard/journal">Journal</a>
         <a href="/dashboard/profile">Profile</a>
+        <a href="/admin" id="admin-link" style="display: none;">Admin</a>
         <a href="#" id="logout-btn">Logout</a>
       </div>
     </div>
@@ -49,6 +50,11 @@ import Layout from '../../layouts/Layout.astro';
 
   if (!isLoggedIn()) {
     window.location.href = '/login';
+  }
+
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  if (user.role === 'admin' || user.role === 'super_admin') {
+    (document.getElementById('admin-link') as HTMLElement).style.display = 'inline';
   }
 
   const listEl = document.getElementById('gratitude-list') as HTMLDivElement;

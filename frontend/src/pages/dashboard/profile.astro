@@ -9,6 +9,7 @@ import Layout from '../../layouts/Layout.astro';
       <div class="dash-nav-links">
         <a href="/dashboard/journal">Journal</a>
         <a href="/dashboard/profile" class="active">Profile</a>
+        <a href="/admin" id="admin-link" style="display: none;">Admin</a>
         <a href="#" id="logout-btn">Logout</a>
       </div>
     </div>
@@ -32,8 +33,23 @@ import Layout from '../../layouts/Layout.astro';
             <label for="email" class="label">Email</label>
             <input type="email" id="email" name="email" disabled class="input" />
           </div>
+          <div>
+            <label class="label">Role</label>
+            <div id="role-display" class="role-badge">—</div>
+          </div>
           <button type="submit" class="btn btn-primary">Save Changes</button>
         </form>
+      </section>
+
+      <section class="settings-card" id="admin-card" style="display: none;">
+        <h2>Admin Access</h2>
+        <div class="admin-row">
+          <div>
+            <p class="admin-title">Admin Dashboard</p>
+            <p class="admin-desc">Manage users, roles, and view statistics</p>
+          </div>
+          <a href="/admin" class="btn btn-primary">Open Admin</a>
+        </div>
       </section>
 
       <section class="settings-card">
@@ -72,9 +88,16 @@ import Layout from '../../layouts/Layout.astro';
     window.location.href = '/login';
   }
 
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  if (user.role === 'admin' || user.role === 'super_admin') {
+    (document.getElementById('admin-link') as HTMLElement).style.display = 'inline';
+  }
+
   const logoutBtn = document.getElementById('logout-btn') as HTMLAnchorElement;
   const errorMsg = document.getElementById('error-msg') as HTMLDivElement;
   const successMsg = document.getElementById('success-msg') as HTMLDivElement;
+  const roleDisplay = document.getElementById('role-display') as HTMLDivElement;
+  const adminCard = document.getElementById('admin-card') as HTMLElement;
 
   logoutBtn.addEventListener('click', (e) => {
     e.preventDefault();
@@ -87,11 +110,28 @@ import Layout from '../../layouts/Layout.astro';
     setTimeout(() => { el.style.display = 'none'; }, 3000);
   }
 
+  function formatRole(role: string): string {
+    const labels: Record<string, string> = {
+      user: 'User',
+      admin: 'Admin',
+      super_admin: 'Super Admin',
+    };
+    return labels[role] || role;
+  }
+
   async function loadProfile() {
     const data = await getProfile();
     if (data) {
       (document.getElementById('name') as HTMLInputElement).value = data.name || '';
       (document.getElementById('email') as HTMLInputElement).value = data.email || '';
+
+      const role = data.role || 'user';
+      roleDisplay.textContent = formatRole(role);
+      roleDisplay.className = `role-badge role-${role}`;
+
+      if (role === 'admin' || role === 'super_admin') {
+        adminCard.style.display = 'block';
+      }
     }
   }
 
@@ -216,6 +256,42 @@ import Layout from '../../layouts/Layout.astro';
   .settings-form {
     display: grid;
     gap: 16px;
+  }
+
+  .role-badge {
+    display: inline-block;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 999px;
+  }
+  .role-user {
+    background: #f0f2ee;
+    color: #66746d;
+  }
+  .role-admin {
+    background: #e8f5e9;
+    color: #2e7d32;
+  }
+  .role-super_admin {
+    background: #fff3e0;
+    color: #e65100;
+  }
+
+  .admin-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .admin-title {
+    font-weight: 600;
+    font-size: 15px;
+  }
+  .admin-desc {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 2px;
   }
 
   .subscription-row {
