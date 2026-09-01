@@ -16,16 +16,97 @@ const { title, description = 'Write 3 things you are grateful for every day.' } 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
     <title>{title} | Thankly</title>
   </head>
-  <body class="min-h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans antialiased">
+  <body>
     <slot />
   </body>
 </html>
 
 <style is:global>
-  *, *::before, *::after {
-    box-sizing: border-box;
+  :root {
+    --bg: #f8f6ef;
+    --surface: #fffdf8;
+    --text: #17382b;
+    --muted: #66746d;
+    --green: #2f7656;
+    --green-dark: #225b42;
+    --border: #dfe5dc;
+    --white: #ffffff;
+    --radius: 18px;
+    --max-width: 1180px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; cursor: pointer; }
+
+  .container {
+    width: min(calc(100% - 40px), var(--max-width));
+    margin-inline: auto;
+  }
+
+  .btn {
+    border: 0;
+    border-radius: 999px;
+    padding: 12px 20px;
+    font-weight: 700;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    display: inline-block;
+    text-align: center;
+    cursor: pointer;
+  }
+  .btn:hover { transform: translateY(-2px); }
+  .btn-primary {
+    color: var(--white);
+    background: var(--green);
+    box-shadow: 0 8px 24px rgba(47, 118, 86, 0.18);
+  }
+  .btn-primary:hover { background: var(--green-dark); }
+  .btn-outline {
+    color: var(--text);
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid var(--border);
+  }
+
+  .input {
+    width: 100%;
+    padding: 14px 18px;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    background: var(--white);
+    font: inherit;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .input:focus {
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px rgba(47, 118, 86, 0.12);
+  }
+  .input::placeholder { color: var(--muted); }
+  .input:disabled {
+    background: #f0f2ee;
+    color: var(--muted);
+    cursor: not-allowed;
+  }
+
+  .label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 6px;
   }
 </style>

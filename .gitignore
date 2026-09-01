@@ -1,6 +1,7 @@
 # Dependencies
 node_modules/
 backend/vendor/
+bun.lockb
 
 # Build output
 backend/bin/

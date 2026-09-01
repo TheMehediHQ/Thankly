@@ -1,0 +1,15 @@
+{
+  "name": "thankly",
+  "private": true,
+  "workspaces": [
+    "frontend"
+  ],
+  "scripts": {
+    "dev": "bun run --cwd frontend dev",
+    "build": "bun run --cwd frontend build",
+    "preview": "bun run --cwd frontend preview",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "setup": "cp -n .env.example .env 2>/dev/null; docker compose up -d postgres redis; cd frontend && bun install"
+  }
+}

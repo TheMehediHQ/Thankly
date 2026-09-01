@@ -3,38 +3,92 @@ import Layout from '../../layouts/Layout.astro';
 ---
 
 <Layout title="Journal">
-  <div class="min-h-screen">
-    <nav class="border-b border-gray-100 dark:border-gray-800">
-      <div class="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
-        <a href="/dashboard" class="text-xl font-bold text-primary-600">Thankly</a>
-        <div class="flex items-center gap-4">
-          <a href="/dashboard/journal" class="text-sm text-primary-600 font-medium">Journal</a>
-          <a href="/dashboard/profile" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900">Profile</a>
-        </div>
+  <nav class="dash-nav">
+    <div class="container dash-nav-inner">
+      <a href="/dashboard" class="dash-logo">🌿 Thankly</a>
+      <div class="dash-nav-links">
+        <a href="/dashboard/journal" class="active">Journal</a>
+        <a href="/dashboard/profile">Profile</a>
       </div>
-    </nav>
+    </div>
+  </nav>
 
-    <main class="max-w-3xl mx-auto px-6 py-12">
-      <div class="flex items-center justify-between mb-8">
+  <main class="container dash-main">
+    <div class="dash-header">
+      <div class="dash-header-row">
         <div>
-          <h1 class="text-2xl font-bold">Journal History</h1>
-          <p class="text-gray-600 dark:text-gray-400 text-sm mt-1">Your complete gratitude journey</p>
+          <h1>Journal History</h1>
+          <p>Your complete gratitude journey</p>
         </div>
-        <div class="flex gap-2">
-          <input
-            type="date"
-            id="date-filter"
-            class="px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm"
-          />
-        </div>
+        <input type="date" id="date-filter" class="input" style="width: auto;" />
       </div>
+    </div>
 
-      <!-- Journal Entries -->
-      <div class="space-y-8" id="journal-entries">
-        <div class="text-center py-12">
-          <p class="text-gray-400">Your journal entries will appear here.</p>
-        </div>
+    <div class="journal-entries" id="journal-entries">
+      <div class="entry-empty">
+        <p>Your journal entries will appear here.</p>
       </div>
-    </main>
-  </div>
+    </div>
+  </main>
 </Layout>
+
+<style>
+  .dash-nav {
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .dash-nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 0;
+  }
+  .dash-logo {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--green);
+  }
+  .dash-nav-links {
+    display: flex;
+    gap: 24px;
+  }
+  .dash-nav-links a {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--muted);
+    transition: color 0.2s;
+  }
+  .dash-nav-links a:hover,
+  .dash-nav-links a.active { color: var(--green); }
+
+  .dash-main {
+    padding: 48px 0;
+    max-width: 640px;
+  }
+  .dash-header { margin-bottom: 32px; }
+  .dash-header h1 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 32px;
+    font-weight: 500;
+  }
+  .dash-header p {
+    color: var(--muted);
+    font-size: 15px;
+    margin-top: 4px;
+  }
+  .dash-header-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .entry-empty {
+    padding: 48px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    text-align: center;
+  }
+  .entry-empty p { color: var(--muted); }
+</style>

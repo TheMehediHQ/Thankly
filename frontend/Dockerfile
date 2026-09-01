@@ -1,12 +1,12 @@
-FROM node:20-alpine
+FROM oven/bun:1-alpine
 
 WORKDIR /app
 
 COPY package.json ./
-RUN npm install
+RUN bun install
 
 COPY . .
 
 EXPOSE 4321
 
-CMD ["npm", "run", "dev"]
+CMD ["bun", "run", "dev"]
