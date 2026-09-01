@@ -9,6 +9,7 @@ import Layout from '../../layouts/Layout.astro';
       <div class="dash-nav-links">
         <a href="/dashboard/journal">Journal</a>
         <a href="/dashboard/profile">Profile</a>
+        <a href="#" id="logout-btn">Logout</a>
       </div>
     </div>
   </nav>
@@ -16,12 +17,12 @@ import Layout from '../../layouts/Layout.astro';
   <main class="container dash-main">
     <div class="dash-header">
       <h1>Today's Gratitudes</h1>
-      <p>What are you grateful for today?</p>
+      <p id="today-date"></p>
     </div>
 
     <div class="entry-list" id="gratitude-list">
       <div class="entry-empty">
-        <p>No entries yet today. Start writing below.</p>
+        <p>Loading...</p>
       </div>
     </div>
 
@@ -37,11 +38,94 @@ import Layout from '../../layouts/Layout.astro';
       ></textarea>
       <div class="entry-form-footer">
         <span class="entry-count" id="remaining-count">3 remaining today</span>
-        <button type="submit" class="btn btn-primary">Add Gratitude</button>
+        <button type="submit" id="submit-btn" class="btn btn-primary">Add Gratitude</button>
       </div>
     </form>
   </main>
 </Layout>
+
+<script>
+  import { getToday, createGratitude, logout, isLoggedIn } from '../../lib/api';
+
+  if (!isLoggedIn()) {
+    window.location.href = '/login';
+  }
+
+  const listEl = document.getElementById('gratitude-list') as HTMLDivElement;
+  const form = document.getElementById('gratitude-form') as HTMLFormElement;
+  const input = document.getElementById('gratitude-input') as HTMLTextAreaElement;
+  const countEl = document.getElementById('remaining-count') as HTMLSpanElement;
+  const dateEl = document.getElementById('today-date') as HTMLParagraphElement;
+  const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
+  const logoutBtn = document.getElementById('logout-btn') as HTMLAnchorElement;
+
+  logoutBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    logout();
+  });
+
+  const emojis = ['☀️', '❤️', '🚀', '🌿', '✨', '🙏', '🌸', '💫'];
+
+  function renderEntries(data: any) {
+    const entries = data.entries || [];
+    const date = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    dateEl.textContent = date;
+
+    if (entries.length === 0) {
+      listEl.innerHTML = '<div class="entry-empty"><p>No entries yet today. Start writing below.</p></div>';
+    } else {
+      listEl.innerHTML = entries.map((e: any, i: number) => `
+        <div class="entry-card">
+          <span class="entry-emoji">${emojis[i % emojis.length]}</span>
+          <span class="entry-text">${escapeHtml(e.content)}</span>
+        </div>
+      `).join('');
+    }
+
+    const remaining = 3 - entries.length;
+    countEl.textContent = `${remaining} remaining today`;
+
+    if (remaining <= 0) {
+      input.disabled = true;
+      submitBtn.disabled = true;
+      input.placeholder = 'Daily limit reached. Come back tomorrow!';
+    }
+  }
+
+  function escapeHtml(text: string) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  async function loadToday() {
+    const data = await getToday();
+    if (data) renderEntries(data);
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const content = input.value.trim();
+    if (!content) return;
+
+    submitBtn.textContent = 'Adding...';
+    submitBtn.style.opacity = '0.6';
+
+    const result = await createGratitude(content);
+
+    if (result?.ok) {
+      input.value = '';
+      await loadToday();
+    } else {
+      alert(result?.data?.error || 'Failed to add gratitude');
+    }
+
+    submitBtn.textContent = 'Add Gratitude';
+    submitBtn.style.opacity = '1';
+  });
+
+  loadToday();
+</script>
 
 <style>
   .dash-nav {
@@ -105,6 +189,17 @@ import Layout from '../../layouts/Layout.astro';
     color: var(--muted);
     font-style: italic;
   }
+  .entry-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 15px;
+  }
+  .entry-emoji { font-size: 22px; }
+  .entry-text { font-size: 15px; }
 
   .entry-form {
     display: grid;

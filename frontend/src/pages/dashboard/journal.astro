@@ -9,6 +9,7 @@ import Layout from '../../layouts/Layout.astro';
       <div class="dash-nav-links">
         <a href="/dashboard/journal" class="active">Journal</a>
         <a href="/dashboard/profile">Profile</a>
+        <a href="#" id="logout-btn">Logout</a>
       </div>
     </div>
   </nav>
@@ -20,17 +21,72 @@ import Layout from '../../layouts/Layout.astro';
           <h1>Journal History</h1>
           <p>Your complete gratitude journey</p>
         </div>
-        <input type="date" id="date-filter" class="input" style="width: auto;" />
       </div>
     </div>
 
     <div class="journal-entries" id="journal-entries">
-      <div class="entry-empty">
-        <p>Your journal entries will appear here.</p>
-      </div>
+      <div class="entry-empty"><p>Loading...</p></div>
     </div>
   </main>
 </Layout>
+
+<script>
+  import { getHistory, logout, isLoggedIn } from '../../lib/api';
+
+  if (!isLoggedIn()) {
+    window.location.href = '/login';
+  }
+
+  const entriesEl = document.getElementById('journal-entries') as HTMLDivElement;
+  const logoutBtn = document.getElementById('logout-btn') as HTMLAnchorElement;
+
+  logoutBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    logout();
+  });
+
+  const emojis = ['☀️', '❤️', '🚀', '🌿', '✨', '🙏', '🌸', '💫'];
+
+  function escapeHtml(text: string) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  async function loadHistory() {
+    const data = await getHistory();
+    if (!data?.history?.length) {
+      entriesEl.innerHTML = '<div class="entry-empty"><p>Your journal entries will appear here.</p></div>';
+      return;
+    }
+
+    const grouped: Record<string, any[]> = {};
+    for (const entry of data.history) {
+      const date = entry.gratitude_date;
+      if (!grouped[date]) grouped[date] = [];
+      grouped[date].push(entry);
+    }
+
+    entriesEl.innerHTML = Object.entries(grouped).map(([date, entries]) => {
+      const d = new Date(date + 'T00:00:00');
+      const formatted = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+      const items = entries.map((e: any, i: number) => `
+        <div class="entry-card">
+          <span class="entry-emoji">${emojis[i % emojis.length]}</span>
+          <span class="entry-text">${escapeHtml(e.content)}</span>
+        </div>
+      `).join('');
+      return `
+        <div class="journal-day">
+          <div class="journal-date">${formatted}</div>
+          ${items}
+        </div>
+      `;
+    }).join('');
+  }
+
+  loadHistory();
+</script>
 
 <style>
   .dash-nav {
@@ -76,12 +132,6 @@ import Layout from '../../layouts/Layout.astro';
     font-size: 15px;
     margin-top: 4px;
   }
-  .dash-header-row {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 16px;
-  }
 
   .entry-empty {
     padding: 48px;
@@ -91,4 +141,28 @@ import Layout from '../../layouts/Layout.astro';
     text-align: center;
   }
   .entry-empty p { color: var(--muted); }
+
+  .journal-day {
+    margin-bottom: 28px;
+  }
+  .journal-date {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--green);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 10px;
+  }
+  .entry-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    margin-bottom: 8px;
+  }
+  .entry-emoji { font-size: 20px; }
+  .entry-text { font-size: 15px; }
 </style>
