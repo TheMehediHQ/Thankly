@@ -1,0 +1,56 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Dashboard">
+  <div class="min-h-screen">
+    <!-- Dashboard Nav -->
+    <nav class="border-b border-gray-100 dark:border-gray-800">
+      <div class="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
+        <a href="/dashboard" class="text-xl font-bold text-primary-600">Thankly</a>
+        <div class="flex items-center gap-4">
+          <a href="/dashboard/journal" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900">Journal</a>
+          <a href="/dashboard/profile" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900">Profile</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Today's Gratitude -->
+    <main class="max-w-3xl mx-auto px-6 py-12">
+      <div class="mb-8">
+        <h1 class="text-2xl font-bold" id="today-date">Today's Gratitudes</h1>
+        <p class="text-gray-600 dark:text-gray-400 text-sm mt-1">What are you grateful for today?</p>
+      </div>
+
+      <!-- Gratitude Entries -->
+      <div class="space-y-4 mb-8" id="gratitude-list">
+        <div class="p-6 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-700">
+          <p class="text-gray-400 italic">No entries yet today. Start writing below.</p>
+        </div>
+      </div>
+
+      <!-- Add Gratitude Form -->
+      <form id="gratitude-form" class="space-y-4">
+        <div>
+          <textarea
+            id="gratitude-input"
+            name="content"
+            rows="3"
+            maxlength="500"
+            class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition resize-none"
+            placeholder="I'm grateful for..."
+          ></textarea>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-sm text-gray-500" id="remaining-count">3 remaining today</span>
+          <button
+            type="submit"
+            class="px-6 py-2 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 transition"
+          >
+            Add Gratitude
+          </button>
+        </div>
+      </form>
+    </main>
+  </div>
+</Layout>

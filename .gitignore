@@ -1,0 +1,40 @@
+# Dependencies
+node_modules/
+backend/vendor/
+
+# Build output
+backend/bin/
+frontend/dist/
+frontend/.astro/
+
+# Environment
+.env
+.env.local
+.env.production
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Docker volumes
+postgres_data/
+redis_data/
+
+# Testing
+coverage/
+*.out
+
+# Temp
+tmp/
+.cache/

@@ -1,0 +1,79 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Pricing">
+  <nav class="fixed top-0 w-full bg-white/80 dark:bg-gray-950/80 backdrop-blur-md z-50 border-b border-gray-100 dark:border-gray-800">
+    <div class="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+      <a href="/" class="text-2xl font-bold text-primary-600">Thankly</a>
+      <a href="/" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900">← Back</a>
+    </div>
+  </nav>
+
+  <section class="pt-32 pb-20 px-6">
+    <div class="max-w-4xl mx-auto">
+      <div class="text-center mb-12">
+        <h1 class="text-4xl font-bold mb-4">Simple, transparent pricing</h1>
+        <p class="text-xl text-gray-600 dark:text-gray-400">Start free, upgrade when you're ready.</p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
+        <!-- Free Plan -->
+        <div class="p-8 rounded-2xl border border-gray-200 dark:border-gray-700">
+          <h2 class="text-xl font-semibold mb-2">Free</h2>
+          <p class="text-4xl font-bold mb-6">$0<span class="text-lg text-gray-500 font-normal">/mo</span></p>
+          <ul class="space-y-3 mb-8">
+            <li class="flex items-center gap-2 text-sm">
+              <span class="text-green-500">✓</span> 3 gratitudes per day
+            </li>
+            <li class="flex items-center gap-2 text-sm">
+              <span class="text-green-500">✓</span> Complete journal history
+            </li>
+            <li class="flex items-center gap-2 text-sm">
+              <span class="text-green-500">✓</span> Basic profile
+            </li>
+            <li class="flex items-center gap-2 text-sm">
+              <span class="text-green-500">✓</span> Basic streak tracking
+            </li>
+          </ul>
+          <a href="/register" class="block text-center py-3 border border-gray-200 dark:border-gray-700 rounded-xl font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+            Get Started
+          </a>
+        </div>
+
+        <!-- Premium Plan -->
+        <div class="p-8 rounded-2xl border-2 border-primary-600 relative">
+          <span class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-primary-600 text-white text-xs font-medium rounded-full">Popular</span>
+          <h2 class="text-xl font-semibold mb-2">Premium</h2>
+          <p class="text-4xl font-bold mb-6">$5<span class="text-lg text-gray-500 font-normal">/mo</span></p>
+          <ul class="space-y-3 mb-8">
+            <li class="flex items-center gap-2 text-sm">
+              <span class="text-green-500">✓</span> Everything in Free
+            </li>
+            <li class="flex items-center gap-2 text-sm">
+              <span class="text-green-500">✓</span> Advanced statistics
+            </li>
+            <li class="flex items-center gap-2 text-sm">
+              <span class="text-green-500">✓</span> Calendar view
+            </li>
+            <li class="flex items-center gap-2 text-sm">
+              <span class="text-green-500">✓</span> Search & filter
+            </li>
+            <li class="flex items-center gap-2 text-sm">
+              <span class="text-green-500">✓</span> Journal export (PDF/JSON)
+            </li>
+            <li class="flex items-center gap-2 text-sm">
+              <span class="text-green-500">✓</span> Custom themes
+            </li>
+            <li class="flex items-center gap-2 text-sm">
+              <span class="text-green-500">✓</span> Daily reminders
+            </li>
+          </ul>
+          <a href="/register" class="block text-center py-3 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 transition">
+            Start Premium
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>

@@ -1,0 +1,93 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Profile">
+  <div class="min-h-screen">
+    <nav class="border-b border-gray-100 dark:border-gray-800">
+      <div class="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
+        <a href="/dashboard" class="text-xl font-bold text-primary-600">Thankly</a>
+        <div class="flex items-center gap-4">
+          <a href="/dashboard/journal" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900">Journal</a>
+          <a href="/dashboard/profile" class="text-sm text-primary-600 font-medium">Profile</a>
+        </div>
+      </div>
+    </nav>
+
+    <main class="max-w-3xl mx-auto px-6 py-12">
+      <h1 class="text-2xl font-bold mb-8">Profile Settings</h1>
+
+      <div class="space-y-8">
+        <!-- Profile Info -->
+        <section class="p-6 bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700">
+          <h2 class="text-lg font-semibold mb-4">Personal Information</h2>
+          <form id="profile-form" class="space-y-4">
+            <div>
+              <label for="name" class="block text-sm font-medium mb-1">Name</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
+              />
+            </div>
+            <div>
+              <label for="email" class="block text-sm font-medium mb-1">Email</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                disabled
+                class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-500 cursor-not-allowed"
+              />
+            </div>
+            <button type="submit" class="px-6 py-2 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 transition">
+              Save Changes
+            </button>
+          </form>
+        </section>
+
+        <!-- Change Password -->
+        <section class="p-6 bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700">
+          <h2 class="text-lg font-semibold mb-4">Change Password</h2>
+          <form id="password-form" class="space-y-4">
+            <div>
+              <label for="current-password" class="block text-sm font-medium mb-1">Current Password</label>
+              <input
+                type="password"
+                id="current-password"
+                class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
+              />
+            </div>
+            <div>
+              <label for="new-password" class="block text-sm font-medium mb-1">New Password</label>
+              <input
+                type="password"
+                id="new-password"
+                minlength="8"
+                class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
+              />
+            </div>
+            <button type="submit" class="px-6 py-2 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 transition">
+              Update Password
+            </button>
+          </form>
+        </section>
+
+        <!-- Subscription -->
+        <section class="p-6 bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700">
+          <h2 class="text-lg font-semibold mb-4">Subscription</h2>
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="font-medium">Free Plan</p>
+              <p class="text-sm text-gray-500">3 gratitudes per day</p>
+            </div>
+            <a href="/pricing" class="px-4 py-2 bg-primary-600 text-white rounded-xl text-sm font-medium hover:bg-primary-700 transition">
+              Upgrade to Premium
+            </a>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+</Layout>
