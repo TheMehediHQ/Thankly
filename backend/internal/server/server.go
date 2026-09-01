@@ -6,11 +6,12 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/thankly/backend/internal/database"
-	"github.com/thankly/backend/internal/middleware"
+	"github.com/thankly/backend/internal/admin"
 	"github.com/thankly/backend/internal/auth"
+	"github.com/thankly/backend/internal/database"
 	"github.com/thankly/backend/internal/gratitude"
 	"github.com/thankly/backend/internal/journal"
+	"github.com/thankly/backend/internal/middleware"
 	"github.com/thankly/backend/internal/subscription"
 	"github.com/thankly/backend/internal/user"
 )
@@ -49,6 +50,7 @@ func (s *Server) setupRoutes() {
 	gratitudeHandler := gratitude.NewHandler(s.db)
 	journalHandler := journal.NewHandler(s.db)
 	subscriptionHandler := subscription.NewHandler(s.db)
+	adminHandler := admin.NewHandler(s.db)
 
 	// Auth routes
 	authGroup := api.Group("/auth")
@@ -84,6 +86,16 @@ func (s *Server) setupRoutes() {
 		protected.GET("/subscription", subscriptionHandler.Get)
 		protected.POST("/subscription/checkout", subscriptionHandler.Checkout)
 		protected.POST("/subscription/cancel", subscriptionHandler.Cancel)
+
+		// Admin routes (admin + super_admin)
+		adminGroup := protected.Group("/admin")
+		adminGroup.Use(middleware.AdminRequired())
+		{
+			adminGroup.GET("/users", adminHandler.ListUsers)
+			adminGroup.PATCH("/users/:id/role", adminHandler.UpdateUserRole)
+			adminGroup.DELETE("/users/:id", adminHandler.DeleteUser)
+			adminGroup.GET("/stats", adminHandler.Stats)
+		}
 	}
 
 	// Webhooks (no auth, verified by signature)

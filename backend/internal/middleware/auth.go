@@ -55,7 +55,34 @@ func AuthRequired() gin.HandlerFunc {
 			return
 		}
 
+		role, _ := claims["role"].(string)
+
 		c.Set("user_id", userID)
+		c.Set("role", role)
+		c.Next()
+	}
+}
+
+func AdminRequired() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		role, exists := c.Get("role")
+		if !exists || (role != "admin" && role != "super_admin") {
+			c.JSON(http.StatusForbidden, gin.H{"error": "admin access required"})
+			c.Abort()
+			return
+		}
+		c.Next()
+	}
+}
+
+func SuperAdminRequired() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		role, exists := c.Get("role")
+		if !exists || role != "super_admin" {
+			c.JSON(http.StatusForbidden, gin.H{"error": "super admin access required"})
+			c.Abort()
+			return
+		}
 		c.Next()
 	}
 }

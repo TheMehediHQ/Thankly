@@ -29,11 +29,11 @@ type ChangePasswordInput struct {
 func (h *Handler) GetProfile(c *gin.Context) {
 	userID := c.GetString("user_id")
 
-	var id, name, email, createdAt string
+	var id, name, email, role, createdAt string
 	err := h.db.QueryRow(
-		`SELECT id, name, email, created_at FROM users WHERE id = $1`,
+		`SELECT id, name, email, role, created_at FROM users WHERE id = $1`,
 		userID,
-	).Scan(&id, &name, &email, &createdAt)
+	).Scan(&id, &name, &email, &role, &createdAt)
 
 	if err == sql.ErrNoRows {
 		c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
@@ -48,6 +48,7 @@ func (h *Handler) GetProfile(c *gin.Context) {
 		"id":         id,
 		"name":       name,
 		"email":      email,
+		"role":       role,
 		"created_at": createdAt,
 	})
 }

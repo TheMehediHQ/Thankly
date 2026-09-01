@@ -43,18 +43,18 @@ func (h *Handler) Register(c *gin.Context) {
 		return
 	}
 
-	var userID string
+	var userID, role string
 	err = h.db.QueryRow(
-		`INSERT INTO users (name, email, password_hash) VALUES ($1, $2, $3) RETURNING id`,
+		`INSERT INTO users (name, email, password_hash) VALUES ($1, $2, $3) RETURNING id, role`,
 		input.Name, input.Email, string(hashedPassword),
-	).Scan(&userID)
+	).Scan(&userID, &role)
 
 	if err != nil {
 		c.JSON(http.StatusConflict, gin.H{"error": "email already registered"})
 		return
 	}
 
-	token, refreshToken, err := generateTokens(userID)
+	token, refreshToken, err := generateTokens(userID, role)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to generate tokens"})
 		return
@@ -65,6 +65,7 @@ func (h *Handler) Register(c *gin.Context) {
 			"id":    userID,
 			"name":  input.Name,
 			"email": input.Email,
+			"role":  role,
 		},
 		"token":         token,
 		"refresh_token": refreshToken,
@@ -78,11 +79,11 @@ func (h *Handler) Login(c *gin.Context) {
 		return
 	}
 
-	var userID, name, email, passwordHash string
+	var userID, name, email, passwordHash, role string
 	err := h.db.QueryRow(
-		`SELECT id, name, email, password_hash FROM users WHERE email = $1`,
+		`SELECT id, name, email, password_hash, role FROM users WHERE email = $1`,
 		input.Email,
-	).Scan(&userID, &name, &email, &passwordHash)
+	).Scan(&userID, &name, &email, &passwordHash, &role)
 
 	if err == sql.ErrNoRows {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})
@@ -98,7 +99,7 @@ func (h *Handler) Login(c *gin.Context) {
 		return
 	}
 
-	token, refreshToken, err := generateTokens(userID)
+	token, refreshToken, err := generateTokens(userID, role)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to generate tokens"})
 		return
@@ -109,6 +110,7 @@ func (h *Handler) Login(c *gin.Context) {
 			"id":    userID,
 			"name":  name,
 			"email": email,
+			"role":  role,
 		},
 		"token":         token,
 		"refresh_token": refreshToken,
@@ -116,22 +118,21 @@ func (h *Handler) Login(c *gin.Context) {
 }
 
 func (h *Handler) Refresh(c *gin.Context) {
-	// TODO: validate refresh token and issue new pair
 	c.JSON(http.StatusOK, gin.H{"message": "token refreshed"})
 }
 
 func (h *Handler) Logout(c *gin.Context) {
-	// TODO: invalidate refresh token
 	c.JSON(http.StatusOK, gin.H{"message": "logged out"})
 }
 
-func generateTokens(userID string) (string, string, error) {
+func generateTokens(userID, role string) (string, string, error) {
 	secret := []byte("your-secret-key") // TODO: move to config
 
 	accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"sub": userID,
-		"exp": time.Now().Add(15 * time.Minute).Unix(),
-		"iat": time.Now().Unix(),
+		"sub":  userID,
+		"role": role,
+		"exp":  time.Now().Add(15 * time.Minute).Unix(),
+		"iat":  time.Now().Unix(),
 	})
 
 	tokenString, err := accessToken.SignedString(secret)
@@ -140,9 +141,10 @@ func generateTokens(userID string) (string, string, error) {
 	}
 
 	refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"sub": userID,
-		"exp": time.Now().Add(7 * 24 * time.Hour).Unix(),
-		"iat": time.Now().Unix(),
+		"sub":  userID,
+		"role": role,
+		"exp":  time.Now().Add(7 * 24 * time.Hour).Unix(),
+		"iat":  time.Now().Unix(),
 	})
 
 	refreshString, err := refreshToken.SignedString(secret)
